@@ -8,6 +8,12 @@ require('dotenv').config();
 // Import MongoDB connection function
 const connectDB = require('./config/db');
 
+// Import session package for login persistence
+const session = require('express-session');
+
+// Import authentication routes
+const authRoutes = require('./routes/authRoutes');
+
 // Initialize Express application
 const app = express();
 
@@ -22,6 +28,16 @@ app.use(express.urlencoded({ extended: true }));
 
 // Serve static files from public folder
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Setup session handling for authentication
+app.use(session({
+    secret: 'secretkey', // 🔴 MOVE TO .env LATER (recommended)
+    resave: false,
+    saveUninitialized: false
+}));
+
+// Use authentication routes
+app.use('/', authRoutes);
 
 // Home route
 app.get('/', (req, res) => {
