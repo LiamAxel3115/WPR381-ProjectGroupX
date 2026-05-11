@@ -57,12 +57,11 @@ exports.loginUser = async (req, res) => {
             return res.send("Invalid credentials");
         }
 
-        // Store user in session
-        req.session.user = {
-            id: user._id,
-            name: user.name,
-            role: user.role
-        };
+        // Store user details in session
+        req.session.userId = user._id;
+        req.session.role = user.role;
+        req.session.name = user.name;
+        
 
         // Redirect to dashboard (or home)
         res.redirect('/dashboard');

@@ -1,10 +1,23 @@
-const authMiddleware = (req, res, next) => {
-  // Check if user has an active session
-  if (req.session && req.session.userId) {
-    next();
-  } else {
-    res.redirect('/auth/login'); // Not logged in, send to login
-  }
+// Check if user has an active session
+const isAuthenticated = (req, res, next) => {
+    if (req.session && req.session.userId) {
+        next();
+    } else {
+        res.redirect('/login');
+    }
 };
 
-module.exports = authMiddleware;
+// Check if logged-in user has admin role
+const isAdmin = (req, res, next) => {
+    if (req.session && req.session.role === 'admin') {
+        next();
+    } else {
+        res.status(403).render('dashboard', {
+            error: 'Access denied. Admins only.',
+            user: req.session
+        });
+    }
+};
+
+// Export both middleware functions
+module.exports = { isAuthenticated, isAdmin };

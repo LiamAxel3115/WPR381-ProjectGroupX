@@ -14,6 +14,12 @@ const session = require('express-session');
 // Import authentication routes
 const authRoutes = require('./routes/authRoutes');
 
+// Import event routes
+const eventRoutes = require('./routes/eventRoutes');
+
+// Import booking routes
+const bookingRoutes = require('./routes/bookingRoutes');
+
 // Initialize Express application
 const app = express();
 
@@ -36,8 +42,17 @@ app.use(session({
     saveUninitialized: false
 }));
 
+// Parse incoming JSON requests
+app.use(express.json());
+
 // Use authentication routes
 app.use('/', authRoutes);
+
+// Enable event routes
+app.use('/', eventRoutes);
+
+// Enable booking routes
+app.use('/', bookingRoutes);
 
 // Home route
 app.get('/', (req, res) => {

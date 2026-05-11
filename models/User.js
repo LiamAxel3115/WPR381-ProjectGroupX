@@ -21,6 +21,13 @@ const userSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true
+    },
+
+     // Store user role for access control
+    role: {
+        type: String,
+        enum: ['user', 'admin'],
+        default: 'user'
     }
 
 }, {
