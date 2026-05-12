@@ -23,13 +23,13 @@ router.get('/contact', (req, res) => {
 });
 
 // Route to create a new enquiry (public)
-router.post('/', createEnquiry);
+router.post('/enquiries/', createEnquiry);
 
 // Route to get all enquiries (admin only)
-router.get('/', isAuthenticated, isAdmin, getEnquiries);
+router.get('/enquiries/', isAuthenticated, isAdmin, getEnquiries);
 
 // Route to update enquiry status (admin only)
-router.post('/:id', isAuthenticated, isAdmin, updateEnquiryStatus);
+router.post('/enquiries/:id', isAuthenticated, isAdmin, updateEnquiryStatus);
 
 // Export router
 module.exports = router;

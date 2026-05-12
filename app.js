@@ -64,7 +64,7 @@ app.use('/bookings', bookingRoutes);
 app.use('/', enquiryRoutes);
 
 // Enable admin routes
-app.use('/', adminRoutes);
+app.use('/admin', adminRoutes);
 
 // Home route
 app.get('/', (req, res) => {

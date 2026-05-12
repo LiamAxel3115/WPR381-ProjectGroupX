@@ -81,6 +81,6 @@ exports.loginUser = async (req, res) => {
 // LOGOUT USER
 exports.logoutUser = (req, res) => {
     req.session.destroy(() => {
-        return res.redirect('/index');
+        return res.redirect('/');
     });
 };
