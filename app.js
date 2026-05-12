@@ -20,6 +20,9 @@ const eventRoutes = require('./routes/eventRoutes');
 // Import booking routes
 const bookingRoutes = require('./routes/bookingRoutes');
 
+// Import enquiry routes
+const enquiryRoutes = require('./routes/enquiryRoutes');
+
 // Initialize Express application
 const app = express();
 
@@ -53,6 +56,17 @@ app.use('/events', eventRoutes);
 
 // Enable booking routes
 app.use('/bookings', bookingRoutes);
+
+// Enable enquiry routes
+app.use('/enquiries', enquiryRoutes);
+
+// Contact route
+app.get('/contact', (req, res) => {
+    res.render('contact', {
+        success: req.query.success,
+        error: req.query.error
+    });
+});
 
 // Home route
 app.get('/', (req, res) => {
