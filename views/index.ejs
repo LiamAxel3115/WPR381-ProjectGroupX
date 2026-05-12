@@ -13,12 +13,61 @@
 
 </head>
 <body>
+    <%- include('partials/header', { title: 'Events' }) %>
 
-    <!-- Main system heading -->
-    <h1>Smart Event Management Platform</h1>
+    <div class="row">
+        <div class="col-md-8">
+            <!-- Main system heading -->
+            <h1>Smart Event Management Platform</h1>
+        </div>
+        <div class="col-md-4">
+            <!--we create a search and filter-->
+            <form action="/" method="GET" class="d-flex">
+                <input class="form-control me-2" type="search" name="search" placeholder="Search events..." aria-label="Search">
+                <select class="form-select me-2" name="category">
+                    <option value="">All Categories</option>
+                    <option value="music">Music</option>
+                    <option value="sports">Sports</option>
+                    <option value="theatre">Theatre</option>
+                    <option value="conference">Conference</option>
+                    <option value="workshop">Workshop</option>
+                    <option value="festival">Festival</option>
+                </select>
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+        </div>
+    </div>
 
+    <!--creation of the event-cards-->
+    <section class="row" aria-labelledby="evets-heading">
+        <h2 id="events-heading" class="visually-hidden">Upcoming events</h2>
+
+        <% if (locals.events && events.length > 0) { %>
+            <% events.forEach(event => { %>
+                <div class="col-md-4">
+                    <article class="card event-card">
+                        <div class="card-body">
+                            <h3 class="card-title h5"><%= event.name %></h3>
+                            <p class="card-text"><%= event.description ? event.description.substring(0,100) : '' %></p>
+                            <p>
+                                <b>Date:</b>
+                                <time datetime=""<%= event.date.toISOString ? event.date.toISOString() : '' %>"
+                                    <%= event.date.toDateString ? event.date.toDateString() : event.date %>
+                                </time>
+                            </p>
+                            <p><strong>Available tickets:</strong> <%= event.availableTickets %></p>
+                            <a href="/events/<%= event._id %>" class="btn btn-primary">View Details</a>
+                        </div>
+                    </article>
+                </div> <%}) %>
+            <% } else { %>
+                <p>No events found.</p>
+            <% } %>
+    </section>
+    
     <!-- Basic server status message -->
     <p>Server is working successfully.</p>
 
+    <%- include('partials/footer') %>
 </body>
 </html>
