@@ -61,10 +61,9 @@ exports.loginUser = async (req, res) => {
         req.session.userId = user._id;
         req.session.role = user.role;
         req.session.name = user.name;
-        
 
-        // Redirect to dashboard (or home)
-        res.redirect('/dashboard');
+        // TEMP CHANGE
+        return res.redirect('/admin/dashboard');
 
     } catch (error) {
         console.log(error);
