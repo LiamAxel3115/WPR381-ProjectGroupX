@@ -61,20 +61,10 @@ app.use('/events', eventRoutes);
 app.use('/bookings', bookingRoutes);
 
 // Enable enquiry routes
-app.use('/enquiries', enquiryRoutes);
+app.use('/', enquiryRoutes);
 
 // Enable admin routes
 app.use('/', adminRoutes);
-
-// Contact page route
-app.get('/contact', (req, res) => {
-
-    // Render contact page with optional success/error messages
-    res.render('contact', {
-        success: req.query.success,
-        error: req.query.error
-    });
-});
 
 // Home route
 app.get('/', (req, res) => {
