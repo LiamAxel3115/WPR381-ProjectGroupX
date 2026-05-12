@@ -23,6 +23,9 @@ const bookingRoutes = require('./routes/bookingRoutes');
 // Import enquiry routes
 const enquiryRoutes = require('./routes/enquiryRoutes');
 
+// Admin route
+const adminRoutes = require('./routes/adminRoutes');
+
 // Initialize Express application
 const app = express();
 
@@ -74,6 +77,9 @@ app.get('/', (req, res) => {
     // Render homepage view
     res.render('index');
 });
+
+//Admin route
+app.use('/', adminRoutes);
 
 // Set application port
 const PORT = process.env.PORT || 3000;

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+<div class="sidebar">
+    <div class="logo">
+        <h2>SmartEvent</h2>
+    </div>
+
+    <nav>
+        <a href="/admin/dashboard"><i class="fas fa-chart-line"></i> Dashboard</a>
+        <a href="/events"><i class="fas fa-calendar-alt"></i> Events</a>
+        <a href="/dashboard"><i class="fas fa-ticket-alt"></i> Bookings</a>
+        <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </nav>
+</div>
+
+<div class="main-content">
+
+    <!-- Top Bar -->
+    <header class="topbar">
+        <div>
+            <h1>Dashboard Overview</h1>
+            <p>Welcome back, Admin</p>
+        </div>
+        <div class="admin-profile">
+            <i class="fas fa-user-circle"></i>
+        </div>
+    </header>
+
+    <!-- Stat Cards -->
+    <section class="cards">
+
+        <div class="card users">
+            <div>
+                <h3>Total Users</h3>
+                <p><%= totalUsers %></p>
+            </div>
+            <i class="fas fa-users"></i>
+        </div>
+
+        <div class="card events">
+            <div>
+                <h3>Total Events</h3>
+                <p><%= totalEvents %></p>
+            </div>
+            <i class="fas fa-calendar-check"></i>
+        </div>
+
+        <div class="card bookings">
+            <div>
+                <h3>Total Bookings</h3>
+                <p><%= totalBookings %></p>
+            </div>
+            <i class="fas fa-ticket"></i>
+        </div>
+
+        <div class="card revenue">
+            <div>
+                <h3>Total Revenue</h3>
+                <p>R <%= totalRevenue %></p>
+            </div>
+            <i class="fas fa-dollar-sign"></i>
+        </div>
+
+    </section>
+
+    <!-- Events Table -->
+    <section class="table-section">
+        <div class="table-header">
+            <h2>Recent Events</h2>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Event</th>
+                    <th>Date</th>
+                    <th>Capacity</th>
+                    <th>Sold</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <% events.forEach(event => { %>
+                    <tr>
+                        <td><%= event.title %></td>
+                        <td><%= new Date(event.date).toDateString() %></td>
+                        <td><%= event.capacity %></td>
+                        <td><%= event.ticketsSold %></td>
+                        <td>
+                            <span class="status <%= event.status.toLowerCase() %>">
+                                <%= event.status %>
+                            </span>
+                        </td>
+                    </tr>
+                <% }) %>
+            </tbody>
+        </table>
+    </section>
+
+</div>
+
+</body>
