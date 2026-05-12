@@ -15,23 +15,23 @@ const {
 
 
 // Route to create a new event
-router.post('/events', createEvent);
+router.post('/', createEvent);
 
 
 // Route to get all events
-router.get('/events', getEvents);
+router.get('/', getEvents);
 
 
 // Route to get single event by ID
-router.get('/events/:id', getEventById);
+router.get('/:id', getEventById);
 
 
 // Route to update event by ID
-router.put('/events/:id', updateEvent);
+router.put('/:id', updateEvent);
 
 
 // Route to delete event by ID
-router.delete('/events/:id', deleteEvent);
+router.delete('/:id', deleteEvent);
 
 
 // Export router

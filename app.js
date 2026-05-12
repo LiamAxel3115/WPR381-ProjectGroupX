@@ -37,7 +37,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Setup session handling for authentication
 app.use(session({
-    secret: 'secretkey', // 🔴 MOVE TO .env LATER (recommended)
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false
 }));
@@ -49,10 +49,10 @@ app.use(express.json());
 app.use('/', authRoutes);
 
 // Enable event routes
-app.use('/', eventRoutes);
+app.use('/events', eventRoutes);
 
 // Enable booking routes
-app.use('/', bookingRoutes);
+app.use('/bookings', bookingRoutes);
 
 // Home route
 app.get('/', (req, res) => {
