@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Events</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<div class="sidebar">
+    <div class="logo">
+        <h2>SmartEvent</h2>
+    </div>
+    <nav>
+        <% if (user && user.role === 'admin') { %>
+            <a href="/admin/dashboard"><i class="fas fa-chart-line"></i> Dashboard</a>
+            <a href="/events" class="active"><i class="fas fa-calendar-alt"></i> Events</a>
+            <a href="/bookings/dashboard"><i class="fas fa-ticket-alt"></i> Bookings</a>
+            <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        <% } else { %>
+            <a href="/bookings/dashboard"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="/events" class="active"><i class="fas fa-calendar-alt"></i> Browse Events</a>
+            <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        <% } %>
+    </nav>
+</div>
+
+<div class="main-content">
+
+    <header class="topbar">
+        <div>
+            <h1>Browse Events</h1>
+            <p>Find and book events happening near you</p>
+        </div>
+        <div class="admin-profile">
+            <i class="fas fa-user-circle"></i>
+        </div>
+    </header>
+
+    <!-- Stats -->
+    <section class="cards">
+        <div class="card events">
+            <div>
+                <h3>Total Events</h3>
+                <p><%= events.length %></p>
+            </div>
+            <i class="fas fa-calendar-check"></i>
+        </div>
+        <div class="card users">
+            <div>
+                <h3>Available</h3>
+                <p><%= events.filter(e => e.capacity - e.ticketsSold > 0).length %></p>
+            </div>
+            <i class="fas fa-ticket-alt"></i>
+        </div>
+        <div class="card bookings">
+            <div>
+                <h3>Sold Out</h3>
+                <p><%= events.filter(e => e.capacity - e.ticketsSold <= 0).length %></p>
+            </div>
+            <i class="fas fa-times-circle"></i>
+        </div>
+    </section>
+
+    <!-- Filter + Table -->
+    <section class="table-section">
+        <div class="table-header">
+            <h2>All Events</h2>
+            <form method="GET" action="/events" style="display:flex; gap: 0.5rem; align-items: center;">
+                <select name="category" onchange="this.form.submit()" style="padding: 0.4rem 0.8rem; border-radius: 6px; border: 1px solid #ddd;">
+                    <option value="">All Categories</option>
+                    <option value="Music"      <%= selectedCategory === 'Music'      ? 'selected' : '' %>>Music</option>
+                    <option value="Sports"     <%= selectedCategory === 'Sports'     ? 'selected' : '' %>>Sports</option>
+                    <option value="Business"   <%= selectedCategory === 'Business'   ? 'selected' : '' %>>Business</option>
+                    <option value="Technology" <%= selectedCategory === 'Technology' ? 'selected' : '' %>>Technology</option>
+                    <option value="Education"  <%= selectedCategory === 'Education'  ? 'selected' : '' %>>Education</option>
+                </select>
+                <% if (selectedCategory) { %>
+                    <a href="/events" style="font-size: 0.85rem; color: #666;">Clear</a>
+                <% } %>
+            </form>
+        </div>
+
+        <% if (success) { %>
+            <div class="alert alert-success" style="margin-bottom: 1rem; padding: 0.75rem; background: #d4edda; border-radius: 6px; color: #155724;">
+                <%= success %>
+            </div>
+        <% } %>
+        <% if (error) { %>
+            <div class="alert alert-error" style="margin-bottom: 1rem; padding: 0.75rem; background: #f8d7da; border-radius: 6px; color: #721c24;">
+                <%= error %>
+            </div>
+        <% } %>
+
+        <% if (events.length === 0) { %>
+            <p>No events found<%= selectedCategory ? ' in ' + selectedCategory : '' %>. Check back soon!</p>
+        <% } else { %>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Event</th>
+                        <th>Date</th>
+                        <th>Venue</th>
+                        <th>Category</th>
+                        <th>Available</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% events.forEach(event => { %>
+                        <% const available = event.capacity - event.ticketsSold; %>
+                        <tr>
+                            <td><%= event.title %></td>
+                            <td><%= new Date(event.date).toDateString() %></td>
+                            <td><%= event.venue %></td>
+                            <td><%= event.category %></td>
+                            <td><%= available %></td>
+                            <td>
+                                <% if (available <= 0) { %>
+                                    <span class="status cancelled">Sold Out</span>
+                                <% } else if (available <= 10) { %>
+                                    <span class="status pending">Almost Full</span>
+                                <% } else { %>
+                                    <span class="status confirmed">Available</span>
+                                <% } %>
+                            </td>
+                            <td>
+                                <% if (available <= 0) { %>
+                                    <button class="cancel-btn" disabled>Sold Out</button>
+                                <% } else if (user && user.userId) { %>
+                                    <a href="/bookings/<%= event._id %>" class="cancel-btn" style="background: #4e73df; text-decoration: none;">Book Now</a>
+                                <% } else { %>
+                                    <a href="/login" class="cancel-btn" style="text-decoration: none;">Login to Book</a>
+                                <% } %>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        <% } %>
+    </section>
+
+</div>
+
+</body>
+</html>
