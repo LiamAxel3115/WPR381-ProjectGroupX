@@ -20,8 +20,12 @@ const eventRoutes = require('./routes/eventRoutes');
 // Import booking routes
 const bookingRoutes = require('./routes/bookingRoutes');
 
+// Admin route
+const adminRoutes = require('./routes/adminRoutes');
+
 // Initialize Express application
 const app = express();
+
 
 // Connect application to MongoDB
 connectDB();
@@ -51,6 +55,9 @@ app.use('/', authRoutes);
 // Enable event routes
 app.use('/', eventRoutes);
 
+//testy test
+app.use(express.static(path.join(__dirname, 'public')));
+
 // Enable booking routes
 app.use('/', bookingRoutes);
 
@@ -60,6 +67,9 @@ app.get('/', (req, res) => {
     // Render homepage view
     res.render('index');
 });
+
+//Admin route
+app.use('/', adminRoutes);
 
 // Set application port
 const PORT = process.env.PORT || 3000;

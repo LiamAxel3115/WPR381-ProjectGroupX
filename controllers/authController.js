@@ -38,7 +38,7 @@ exports.registerUser = async (req, res) => {
 
 
 
-// LOGIN USER
+// LOGIN USER TEST FOR DASHBOARD DO NOT COMMIT TO MAIN LOLOLOLOLOLOLOLOLOL
 exports.loginUser = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -51,6 +51,7 @@ exports.loginUser = async (req, res) => {
         }
 
         // Compare password
+
         const isMatch = await bcrypt.compare(password, user.password);
 
         if (!isMatch) {
@@ -61,10 +62,9 @@ exports.loginUser = async (req, res) => {
         req.session.userId = user._id;
         req.session.role = user.role;
         req.session.name = user.name;
-        
 
-        // Redirect to dashboard (or home)
-        res.redirect('/dashboard');
+        // TEMP CHANGE
+        return res.redirect('/admin/dashboard');
 
     } catch (error) {
         console.log(error);

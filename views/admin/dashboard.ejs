@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <h2>Admin Panel</h2>
+    <a href="/admin/dashboard">Dashboard</a>
+    <a href="/events">Events</a>
+    <a href="/dashboard">Bookings</a>
+    <a href="/logout">Logout</a>
+</div>
+
+<!-- Main content -->
+<div class="main">
+
+    <div class="header">
+        <h1>Dashboard Overview</h1>
+        <p>Welcome, Admin</p>
+    </div>
+
+    <!-- Cards -->
+    <div class="cards">
+        <div class="card">
+            <h3>Total Users</h3>
+            <p><%= totalUsers %></p>
+        </div>
+
+        <div class="card">
+            <h3>Total Events</h3>
+            <p><%= totalEvents %></p>
+        </div>
+
+        <div class="card">
+            <h3>Total Bookings</h3>
+            <p><%= totalBookings %></p>
+        </div>
+
+        <div class="card">
+            <h3>Total Revenue</h3>
+            <p>R <%= totalRevenue %></p>
+        </div>
+    </div>
+
+    <!-- Events Table -->
+    <h2 style="margin-top: 40px;">Events</h2>
+
+    <table>
+        <tr>
+            <th>Title</th>
+            <th>Date</th>
+            <th>Capacity</th>
+            <th>Tickets Sold</th>
+            <th>Status</th>
+        </tr>
+
+        <% events.forEach(event => { %>
+            <tr>
+                <td><%= event.title %></td>
+                <td><%= new Date(event.date).toDateString() %></td>
+                <td><%= event.capacity %></td>
+                <td><%= event.ticketsSold %></td>
+                <td>
+                    <span class="badge <%= event.status.toLowerCase() %>">
+                        <%= event.status %>
+                    </span>
+                </td>
+            </tr>
+        <% }) %>
+
+    </table>
+
+</div>
+
+</body>
+</html>
