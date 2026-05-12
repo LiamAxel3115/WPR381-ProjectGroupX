@@ -20,7 +20,10 @@ const eventRoutes = require('./routes/eventRoutes');
 // Import booking routes
 const bookingRoutes = require('./routes/bookingRoutes');
 
-// Admin route
+// Import enquiry routes
+const enquiryRoutes = require('./routes/enquiryRoutes');
+
+// Import admin routes
 const adminRoutes = require('./routes/adminRoutes');
 
 // Initialize Express application
@@ -35,6 +38,9 @@ app.set('view engine', 'ejs');
 // Middleware to handle form data
 app.use(express.urlencoded({ extended: true }));
 
+// Parse incoming JSON requests
+app.use(express.json());
+
 // Serve static files from public folder
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -45,9 +51,6 @@ app.use(session({
     saveUninitialized: false
 }));
 
-// Parse incoming JSON requests
-app.use(express.json());
-
 // Use authentication routes
 app.use('/', authRoutes);
 
@@ -57,15 +60,28 @@ app.use('/events', eventRoutes);
 // Enable booking routes
 app.use('/bookings', bookingRoutes);
 
+// Enable enquiry routes
+app.use('/enquiries', enquiryRoutes);
+
+// Enable admin routes
+app.use('/', adminRoutes);
+
+// Contact page route
+app.get('/contact', (req, res) => {
+
+    // Render contact page with optional success/error messages
+    res.render('contact', {
+        success: req.query.success,
+        error: req.query.error
+    });
+});
+
 // Home route
 app.get('/', (req, res) => {
 
     // Render homepage view
     res.render('index');
 });
-
-//Admin route
-app.use('/', adminRoutes);
 
 // Set application port
 const PORT = process.env.PORT || 3000;

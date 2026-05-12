@@ -1,7 +1,7 @@
 {
   "name": "wpr381-projectgroupx",
   "version": "1.0.0",
-  "description": "",
+  "description": "Web Programming 381 Project for Group X.   Smart-Event-Management-Platform",
   "main": "app.js",
   "scripts": {
     "dev": "nodemon app.js",
