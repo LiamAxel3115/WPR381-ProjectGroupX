@@ -49,6 +49,14 @@ const eventSchema = new mongoose.Schema({
         default: 0
     },
 
+    // Store price per ticket
+    ticketPrice: {
+        type: Number,
+        required: true,
+        min: 0,
+        default: 0
+    },
+
     // Reference the user/admin who created the event
     createdBy: {
         type: mongoose.Schema.Types.ObjectId,
@@ -63,9 +71,18 @@ const eventSchema = new mongoose.Schema({
     }
 
 }, {
-
     // Automatically add createdAt and updatedAt fields
     timestamps: true
+});
+
+// Virtual field to calculate available tickets without storing in DB
+eventSchema.virtual('availableTickets').get(function () {
+    return this.capacity - this.ticketsSold;
+});
+
+// Virtual field to check if event is sold out
+eventSchema.virtual('isSoldOut').get(function () {
+    return this.ticketsSold >= this.capacity;
 });
 
 // Export Event model

@@ -14,23 +14,23 @@ const createBooking = async (req, res) => {
             return res.status(404).render('error', { message: 'Event not found' });
         }
 
-        // Calculate available tickets from capacity and ticketsSold
         const availableTickets = event.capacity - event.ticketsSold;
 
         if (ticketQuantity > availableTickets) {
-            return res.redirect(`/events/${req.params.eventId}?error=Not enough tickets available`);
+            return res.redirect(`/bookings/${req.params.eventId}?error=Not enough tickets available`);
         }
 
-        // Create booking (totalPrice is 0 since events are free)
+        // Calculate total price using ticketPrice from event model
+        const totalPrice = ticketQuantity * event.ticketPrice;
+
         const booking = await Booking.create({
             user: req.session.userId,
             event: event._id,
             ticketQuantity,
-            totalPrice: 0,
+            totalPrice,
             status: 'Confirmed'
         });
 
-        // Increment ticketsSold instead of decrementing availableTickets
         event.ticketsSold += parseInt(ticketQuantity);
         await event.save();
 
