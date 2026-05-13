@@ -62,8 +62,13 @@ exports.loginUser = async (req, res) => {
         req.session.role = user.role;
         req.session.name = user.name;
 
-        // TEMP CHANGE
-        return res.redirect('/admin/dashboard');
+        if(user.role == 'admin'){
+            return res.redirect('/admin/dashboard');
+        }
+        else{
+            return res.redirect('/bookings/dashboard');
+         }
+        
 
     } catch (error) {
         console.log(error);
@@ -76,6 +81,6 @@ exports.loginUser = async (req, res) => {
 // LOGOUT USER
 exports.logoutUser = (req, res) => {
     req.session.destroy(() => {
-        res.redirect('/login');
+        return res.redirect('/');
     });
 };

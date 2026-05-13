@@ -12,14 +12,24 @@ const {
 // Import authentication and authorization middleware
 const { isAuthenticated, isAdmin } = require('../middleware/authMiddleware');
 
+// Route to display contact page
+router.get('/contact', (req, res) => {
+
+    // Render contact page with optional messages
+    res.render('contact', {
+        success: req.query.success,
+        error: req.query.error
+    });
+});
+
 // Route to create a new enquiry (public)
-router.post('/', createEnquiry);
+router.post('/enquiries/', createEnquiry);
 
 // Route to get all enquiries (admin only)
-router.get('/', isAuthenticated, isAdmin, getEnquiries);
+router.get('/enquiries/', isAuthenticated, isAdmin, getEnquiries);
 
 // Route to update enquiry status (admin only)
-router.post('/:id', isAuthenticated, isAdmin, updateEnquiryStatus);
+router.post('/enquiries/:id', isAuthenticated, isAdmin, updateEnquiryStatus);
 
 // Export router
 module.exports = router;

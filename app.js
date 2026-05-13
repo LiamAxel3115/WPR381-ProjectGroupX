@@ -23,8 +23,11 @@ const bookingRoutes = require('./routes/bookingRoutes');
 // Import enquiry routes
 const enquiryRoutes = require('./routes/enquiryRoutes');
 
-// Admin route
+// Import admin routes
 const adminRoutes = require('./routes/adminRoutes');
+
+//Import MethodOverride to allow deleting of events
+const methodOverride = require('method-override');
 
 // Initialize Express application
 const app = express();
@@ -38,6 +41,9 @@ app.set('view engine', 'ejs');
 // Middleware to handle form data
 app.use(express.urlencoded({ extended: true }));
 
+// Parse incoming JSON requests
+app.use(express.json());
+
 // Serve static files from public folder
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -47,9 +53,6 @@ app.use(session({
     resave: false,
     saveUninitialized: false
 }));
-
-// Parse incoming JSON requests
-app.use(express.json());
 
 // Use authentication routes
 app.use('/', authRoutes);
@@ -61,15 +64,13 @@ app.use('/events', eventRoutes);
 app.use('/bookings', bookingRoutes);
 
 // Enable enquiry routes
-app.use('/enquiries', enquiryRoutes);
+app.use('/', enquiryRoutes);
 
-// Contact route
-app.get('/contact', (req, res) => {
-    res.render('contact', {
-        success: req.query.success,
-        error: req.query.error
-    });
-});
+// Enable admin routes
+app.use('/admin', adminRoutes);
+
+//Enable method override for deleting events
+app.use(methodOverride('_method'));
 
 // Home route
 app.get('/', (req, res) => {
@@ -77,9 +78,6 @@ app.get('/', (req, res) => {
     // Render homepage view
     res.render('index');
 });
-
-//Admin route
-app.use('/', adminRoutes);
 
 // Set application port
 const PORT = process.env.PORT || 3000;

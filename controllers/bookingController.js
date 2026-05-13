@@ -7,27 +7,22 @@ const Event = require('../models/Event');
 // Handle ticket booking for a specific event
 const createBooking = async (req, res) => {
     try {
-
-        // Extract ticket quantity from form submission
         const { ticketQuantity } = req.body;
-
-        // Find the event by ID from URL parameter
         const event = await Event.findById(req.params.eventId);
 
-        // Return error if event does not exist
         if (!event) {
             return res.status(404).render('error', { message: 'Event not found' });
         }
 
-        // Check if requested tickets exceed available capacity
-        if (ticketQuantity > event.availableTickets) {
-            return res.redirect(`/events/${req.params.eventId}?error=Not enough tickets available`);
+        const availableTickets = event.capacity - event.ticketsSold;
+
+        if (ticketQuantity > availableTickets) {
+            return res.redirect(`/bookings/${req.params.eventId}?error=Not enough tickets available`);
         }
 
-        // Calculate total price based on quantity and event ticket price
+        // Calculate total price using ticketPrice from event model
         const totalPrice = ticketQuantity * event.ticketPrice;
 
-        // Create and save new booking to database
         const booking = await Booking.create({
             user: req.session.userId,
             event: event._id,
@@ -36,21 +31,13 @@ const createBooking = async (req, res) => {
             status: 'Confirmed'
         });
 
-        // Deduct booked tickets from event available capacity
-        event.availableTickets -= ticketQuantity;
-
-        // Save updated event capacity to database
+        event.ticketsSold += parseInt(ticketQuantity);
         await event.save();
 
-        // Redirect user to dashboard with success message
         res.redirect('/bookings/dashboard?success=Booking confirmed');
 
     } catch (err) {
-
-        // Log error to console for debugging
         console.error(err);
-
-        // Render error page if booking fails
         res.status(500).render('error', { message: 'Booking failed' });
     }
 };
@@ -97,8 +84,8 @@ const cancelBooking = async (req, res) => {
         // Restore tickets to event capacity if booking was confirmed
         if (booking.status === 'Confirmed') {
             await Event.findByIdAndUpdate(booking.event._id, {
-                $inc: { availableTickets: booking.ticketQuantity }
-            });
+            $inc: { ticketsSold: -booking.ticketQuantity }
+        });
         }
 
         // Update booking status to cancelled
@@ -139,7 +126,11 @@ const getAdminDashboard = async (req, res) => {
             .reduce((sum, b) => sum + b.totalPrice, 0);
 
         // Render admin dashboard with bookings and analytics
-        res.render('bookings/adminDashboard', { bookings, totalBookings, totalRevenue });
+        res.render('bookings', {
+        bookings,
+        totalBookings,
+        totalRevenue
+        });
 
     } catch (err) {
 

@@ -6,5 +6,5 @@ const adminController = require('../controllers/adminController');
 
 //change this back later when login works lmao
 //router.get('/admin/dashboard', isAuthenticated, isAdmin, adminController.dashboard);
-router.get('/admin/dashboard', adminController.dashboard);
+router.get('/dashboard', adminController.dashboard);
 module.exports = router;

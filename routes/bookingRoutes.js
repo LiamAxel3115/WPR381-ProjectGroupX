@@ -1,3 +1,6 @@
+//Import Event Model
+const Event = require('../models/Event');
+
 // Import Express and create router instance
 const express = require('express');
 const router = express.Router();
@@ -24,6 +27,23 @@ router.post('/:id/cancel', isAuthenticated, cancelBooking);
 
 // Route to display admin dashboard with all bookings and analytics
 router.get('/admin', isAuthenticated, isAdmin, getAdminDashboard);
+
+// Show booking form for a specific event
+router.get('/:eventId', isAuthenticated, async (req, res) => {
+    try {
+        const event = await Event.findById(req.params.eventId);
+        if (!event) return res.status(404).render('error', { message: 'Event not found' });
+
+        res.render('bookings', {
+            bookings,
+            totalBookings,
+            totalRevenue
+        });
+        
+    } catch (err) {
+        res.status(500).render('error', { message: 'Could not load booking page' });
+    }
+});
 
 // Export router for use in app.js
 module.exports = router;

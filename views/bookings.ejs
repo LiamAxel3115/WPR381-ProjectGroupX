@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Page Title -->
+    <title>Bookings Dashboard</title>
+
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/style.css">
+</head>
+
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+
+    <div class="logo">
+        <h2>SmartEvent</h2>
+    </div>
+
+    <nav>
+        <a href="/admin/dashboard">
+            <i class="fas fa-chart-line"></i> Dashboard
+        </a>
+
+        <a href="/events">
+            <i class="fas fa-calendar-alt"></i> Events
+        </a>
+
+        <a href="/bookings/admin" class="active">
+            <i class="fas fa-ticket-alt"></i> Bookings
+        </a>
+
+        <a href="/logout">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+    </nav>
+
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+
+    <!-- Top Bar -->
+    <header class="topbar">
+
+        <div>
+            <h1>Booking Dashboard</h1>
+            <p>Manage all event bookings</p>
+        </div>
+
+        <div class="admin-profile">
+            <i class="fas fa-user-circle"></i>
+        </div>
+
+    </header>
+
+    <!-- Statistics Cards -->
+    <section class="cards">
+
+        <div class="card bookings">
+            <div>
+                <h3>Total Bookings</h3>
+                <p><%= totalBookings %></p>
+            </div>
+
+            <i class="fas fa-ticket"></i>
+        </div>
+
+        <div class="card revenue">
+            <div>
+                <h3>Total Revenue</h3>
+                <p>R <%= totalRevenue %></p>
+            </div>
+
+            <i class="fas fa-dollar-sign"></i>
+        </div>
+
+    </section>
+
+    <!-- Bookings Table -->
+    <section class="table-section">
+
+        <div class="table-header">
+            <h2>All Bookings</h2>
+        </div>
+
+        <% if (bookings.length === 0) { %>
+
+            <div class="alert alert-info">
+                No bookings available.
+            </div>
+
+        <% } else { %>
+
+            <table class="table table-striped table-bordered bg-white">
+
+                <thead class="table-dark">
+                    <tr>
+                        <th>User</th>
+                        <th>Email</th>
+                        <th>Event</th>
+                        <th>Tickets</th>
+                        <th>Total Price</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <% bookings.forEach(booking => { %>
+
+                        <tr>
+
+                            <!-- User Name -->
+                            <td>
+                                <%= booking.user.name %>
+                            </td>
+
+                            <!-- User Email -->
+                            <td>
+                                <%= booking.user.email %>
+                            </td>
+
+                            <!-- Event Title -->
+                            <td>
+                                <%= booking.event.title %>
+                            </td>
+
+                            <!-- Ticket Quantity -->
+                            <td>
+                                <%= booking.ticketQuantity %>
+                            </td>
+
+                            <!-- Booking Total -->
+                            <td>
+                                R <%= booking.totalPrice %>
+                            </td>
+
+                            <!-- Booking Status -->
+                            <td>
+                                <span class="status <%= booking.status.toLowerCase() %>">
+                                    <%= booking.status %>
+                                </span>
+                            </td>
+
+                        </tr>
+
+                    <% }) %>
+
+                </tbody>
+
+            </table>
+
+        <% } %>
+
+    </section>
+
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
