@@ -16,23 +16,35 @@ const createEvent = async (req, res) => {
 // Get all events 
 const getEvents = async (req, res) => {
     try {
-
-        // Build filter object — exclude cancelled events
         const filter = { status: { $ne: 'Cancelled' } };
 
-        // Apply category filter 
+        // Filter by category
         if (req.query.category) {
             filter.category = req.query.category;
         }
 
-        // Fetch filtered events sorted by date ascending
-        const events = await Event.find(filter).sort({ date: 1 });
+        // Filter by date - show only events from today onwards
+        if (req.query.date === 'upcoming') {
+            filter.date = { $gte: new Date() };
+        } else if (req.query.date === 'past') {
+            filter.date = { $lt: new Date() };
+        }
 
-        // Render events listing page
+        // Filter by availability - only show events with tickets left
+        let events = await Event.find(filter).sort({ date: 1 });
+
+        if (req.query.availability === 'available') {
+            events = events.filter(e => e.ticketsSold < e.capacity);
+        } else if (req.query.availability === 'soldout') {
+            events = events.filter(e => e.ticketsSold >= e.capacity);
+        }
+
         res.render('events', {
             events,
             user: req.session,
             selectedCategory: req.query.category || '',
+            selectedDate: req.query.date || '',
+            selectedAvailability: req.query.availability || '',
             success: req.query.success || null,
             error: req.query.error || null
         });
