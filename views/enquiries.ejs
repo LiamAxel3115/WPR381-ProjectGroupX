@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enquiries</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+<div class="sidebar">
+    <div class="logo">
+        <h2>SmartEvent</h2>
+    </div>
+    <nav>
+        <a href="/admin/dashboard"><i class="fas fa-chart-line"></i> Dashboard</a>
+        <a href="/events"><i class="fas fa-calendar-alt"></i> Events</a>
+        <a href="/bookings/admin"><i class="fas fa-ticket-alt"></i> Bookings</a>
+        <a href="/enquiries" class="active"><i class="fas fa-envelope"></i> Enquiries</a>
+        <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </nav>
+</div>
+
+<div class="main-content">
+
+    <header class="topbar">
+        <div>
+            <h1>Enquiries</h1>
+            <p>View and manage user enquiries</p>
+        </div>
+        <div class="admin-profile">
+            <i class="fas fa-user-circle"></i>
+        </div>
+    </header>
+
+    <!-- Stats -->
+    <section class="cards">
+        <div class="card users">
+            <div>
+                <h3>Total Enquiries</h3>
+                <p><%= totalEnquiries %></p>
+            </div>
+            <i class="fas fa-envelope"></i>
+        </div>
+        <div class="card bookings">
+            <div>
+                <h3>Open</h3>
+                <p><%= enquiries.filter(e => e.status === 'Open').length %></p>
+            </div>
+            <i class="fas fa-envelope-open"></i>
+        </div>
+        <div class="card events">
+            <div>
+                <h3>In Progress</h3>
+                <p><%= enquiries.filter(e => e.status === 'In Progress').length %></p>
+            </div>
+            <i class="fas fa-spinner"></i>
+        </div>
+        <div class="card revenue">
+            <div>
+                <h3>Resolved</h3>
+                <p><%= resolvedEnquiries %></p>
+            </div>
+            <i class="fas fa-check-circle"></i>
+        </div>
+    </section>
+
+    <!-- Filter + Table -->
+    <section class="table-section">
+        <div class="table-header">
+            <h2>All Enquiries</h2>
+            <form method="GET" action="/enquiries" style="display:flex; gap: 0.5rem; align-items: center;">
+                <select name="status" onchange="this.form.submit()" style="padding: 0.4rem 0.8rem; border-radius: 6px; border: 1px solid #ddd;">
+                    <option value="">All Statuses</option>
+                    <option value="Open"        <%= selectedStatus === 'Open'        ? 'selected' : '' %>>Open</option>
+                    <option value="In Progress" <%= selectedStatus === 'In Progress' ? 'selected' : '' %>>In Progress</option>
+                    <option value="Resolved"    <%= selectedStatus === 'Resolved'    ? 'selected' : '' %>>Resolved</option>
+                </select>
+                <% if (selectedStatus) { %>
+                    <a href="/enquiries" style="font-size: 0.85rem; color: #666;">Clear</a>
+                <% } %>
+            </form>
+        </div>
+
+        <% if (enquiries.length === 0) { %>
+            <p>No enquiries found<%= selectedStatus ? ' with status ' + selectedStatus : '' %>.</p>
+        <% } else { %>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Subject</th>
+                        <th>Message</th>
+                        <th>Status</th>
+                        <th>Received</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% enquiries.forEach(enquiry => { %>
+                        <tr>
+                            <td><%= enquiry.name %></td>
+                            <td><%= enquiry.email %></td>
+                            <td><%= enquiry.subject %></td>
+                            <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                <%= enquiry.message %>
+                            </td>
+                            <td>
+                                <% if (enquiry.status === 'Open') { %>
+                                    <span class="status pending">Open</span>
+                                <% } else if (enquiry.status === 'In Progress') { %>
+                                    <span class="status upcoming">In Progress</span>
+                                <% } else { %>
+                                    <span class="status confirmed">Resolved</span>
+                                <% } %>
+                            </td>
+                            <td><%= new Date(enquiry.createdAt).toDateString() %></td>
+                            <td>
+                                <select
+                                    class="status-select"
+                                    data-id="<%= enquiry._id %>"
+                                    style="padding: 0.3rem 0.5rem; border-radius: 6px; border: 1px solid #ddd;">
+                                    <option value="Open"        <%= enquiry.status === 'Open'        ? 'selected' : '' %>>Open</option>
+                                    <option value="In Progress" <%= enquiry.status === 'In Progress' ? 'selected' : '' %>>In Progress</option>
+                                    <option value="Resolved"    <%= enquiry.status === 'Resolved'    ? 'selected' : '' %>>Resolved</option>
+                                </select>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </tbody>
+            </table>
+        <% } %>
+    </section>
+
+</div>
+
+<script>
+(function () {
+    // Update enquiry status on dropdown change
+    document.querySelectorAll('.status-select').forEach(function (select) {
+        select.addEventListener('change', function () {
+            var id = select.dataset.id;
+            var status = select.value;
+
+            fetch('/enquiries/' + id, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: status })
+            }).then(function (res) {
+                if (res.ok) { window.location.reload(); }
+                else { alert('Failed to update status'); }
+            });
+        });
+    });
+})();
+</script>
+
+</body>
+</html>

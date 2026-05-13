@@ -18,6 +18,7 @@
             <a href="/admin/dashboard"><i class="fas fa-chart-line"></i> Dashboard</a>
             <a href="/events" class="active"><i class="fas fa-calendar-alt"></i> Events</a>
             <a href="/bookings/admin"><i class="fas fa-ticket-alt"></i> Bookings</a>
+            <a href="/enquiries"><i class="fas fa-envelope"></i> Enquiries</a>
             <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
         <% } else { %>
             <a href="/bookings/dashboard"><i class="fas fa-home"></i> Dashboard</a>
@@ -149,7 +150,7 @@
                                 <% if (available <= 0) { %>
                                     <button class="cancel-btn" disabled>Sold Out</button>
                                 <% } else if (user && user.userId) { %>
-                                    <a href="/bookings/<%= event._id %>" class="cancel-btn" style="background: #4e73df; text-decoration: none;">Book Now</a>
+                                    <a href="/bookings/<%= event._id %>" class="view-btn" style="background: #4e73df; text-decoration: none;">Book Now</a>
                                 <% } else { %>
                                     <a href="/login" class="cancel-btn" style="text-decoration: none;">Login to Book</a>
                                 <% } %>

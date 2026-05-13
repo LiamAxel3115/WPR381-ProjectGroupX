@@ -83,7 +83,7 @@ body {
 /* Cards */
 .cards {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 25px;
     margin-bottom: 40px;
 }
@@ -306,5 +306,42 @@ tr:hover {
 }
 
 .view-btn.active:hover {
+    background: #059669;
+}
+
+
+/* Delete button - matches edit/view-btn style but red */
+.delete-btn {
+    background: #ef4444;
+    color: #fff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background 0.3s;
+}
+
+.delete-btn:hover {
+    background: #dc2626;
+}
+
+/* Book Now / cancel button - matches view-btn style but green */
+.cancel-btn {
+    background: #10b981;
+    color: #fff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background 0.3s;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.cancel-btn:hover {
     background: #059669;
 }
