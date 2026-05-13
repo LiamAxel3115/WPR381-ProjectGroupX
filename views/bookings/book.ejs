@@ -1,0 +1,85 @@
+<%- include('../partials/header', { title: 'Book Event' }) %>
+
+<div class="row justify-content-center">
+    <div class="col-md-7">
+
+        <a href="/events" class="text-muted d-inline-block mb-3">← Back to Events</a>
+
+        <h1 class="mb-1"><%= event.title %></h1>
+        <p class="text-muted mb-4"><%= event.category %> &mdash; <%= new Date(event.date).toDateString() %></p>
+
+        <% const available = event.capacity - event.ticketsSold; %>
+
+        <!-- Event Details -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <h5 class="card-title">Event Details</h5>
+                <p class="card-text"><%= event.description %></p>
+                <ul class="list-unstyled mb-0">
+                    <li class="mb-1"><strong>Venue:</strong> <%= event.venue %></li>
+                    <li class="mb-1"><strong>Date:</strong> <%= new Date(event.date).toDateString() %></li>
+                    <li class="mb-1"><strong>Tickets Remaining:</strong> <%= available %></li>
+                </ul>
+            </div>
+        </div>
+
+        <% if (error) { %>
+            <div class="alert alert-danger"><%= error %></div>
+        <% } %>
+
+        <% if (available <= 0 || event.status === 'Cancelled') { %>
+            <div class="alert alert-warning">
+                <%= event.status === 'Cancelled' ? 'This event has been cancelled.' : 'This event is fully booked.' %>
+            </div>
+        <% } else { %>
+
+            <!-- Booking Form -->
+            <h5 class="mb-3">Reserve Your Tickets</h5>
+            <form action="/bookings/<%= event._id %>" method="POST">
+
+                <div class="mb-3">
+                    <label for="ticketQuantity" class="form-label">Number of Tickets</label>
+                    <input
+                        type="number"
+                        class="form-control"
+                        id="ticketQuantity"
+                        name="ticketQuantity"
+                        min="1"
+                        max="<%= available %>"
+                        value="1"
+                        required
+                    />
+                    <div class="form-text"><%= available %> tickets remaining</div>
+                </div>
+
+                <!-- Booking Summary -->
+                <div class="card mb-4 bg-light">
+                    <div class="card-body">
+                        <h6 class="card-title">Booking Summary</h6>
+                        <div class="d-flex justify-content-between">
+                            <span>Event</span>
+                            <span><%= event.title %></span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span>Tickets</span>
+                            <span id="summaryQty">1</span>
+                        </div>
+                        <hr/>
+                        <p class="text-muted small mb-0">
+                            <i class="fas fa-info-circle"></i>
+                            Payment will be handled at the event. Please bring this booking confirmation with you.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg">Confirm Booking</button>
+                </div>
+
+            </form>
+
+        <% } %>
+
+
+    </div>
+</div>
