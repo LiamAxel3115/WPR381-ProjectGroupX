@@ -72,6 +72,12 @@
 
     </section>
 
+    <div class="table-header">
+        <h2>Recent Events</h2>
+        <button id="btn-new-event" class="view-btn">+ Create Event</button>
+    </div>
+
+
     <!-- Events Table -->
     <section class="table-section">
         <div class="table-header">
@@ -108,5 +114,45 @@
     </section>
 
 </div>
+
+<!-- MODAL: NEW EVENT FORM -->
+<div class="modal-overlay" id="new-event-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <h2>Create New Event</h2>
+      <button class="modal-close" id="new-event-close">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="newEventForm" class="detail-grid">
+        <div class="detail-item">
+          <label>Title</label>
+          <input type="text" id="ev-title" name="title" required />
+        </div>
+        <div class="detail-item">
+          <label>Date</label>
+          <input type="date" id="ev-date" name="date" required />
+        </div>
+        <div class="detail-item">
+          <label>Capacity</label>
+          <input type="number" id="ev-capacity" name="capacity" required />
+        </div>
+        <div class="detail-item">
+          <label>Status</label>
+          <select id="ev-status" name="status">
+            <option value="Upcoming">Upcoming</option>
+            <option value="Active">Active</option>
+            <option value="Completed">Completed</option>
+            <option value="Cancelled">Cancelled</option>
+          </select>
+        </div>
+        <button type="submit" class="view-btn active" style="margin-top:1rem">Create Event</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="/scripts.js"">
+
+</script>
 
 </body>
