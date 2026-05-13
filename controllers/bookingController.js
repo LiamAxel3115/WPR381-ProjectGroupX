@@ -126,7 +126,11 @@ const getAdminDashboard = async (req, res) => {
             .reduce((sum, b) => sum + b.totalPrice, 0);
 
         // Render admin dashboard with bookings and analytics
-        res.render('bookings/adminDashboard', { bookings, totalBookings, totalRevenue });
+        res.render('bookings', {
+        bookings,
+        totalBookings,
+        totalRevenue
+        });
 
     } catch (err) {
 

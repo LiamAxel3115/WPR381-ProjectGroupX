@@ -13,11 +13,10 @@
     <div class="logo">
         <h2>SmartEvent</h2>
     </div>
-
     <nav>
-        <a href="/admin/dashboard"><i class="fas fa-chart-line"></i> Dashboard</a>
+        <a href="/admin/dashboard" class="active"><i class="fas fa-chart-line"></i> Dashboard</a>
         <a href="/events"><i class="fas fa-calendar-alt"></i> Events</a>
-        <a href="/dashboard"><i class="fas fa-ticket-alt"></i> Bookings</a>
+        <a href="/bookings/admin"><i class="fas fa-ticket-alt"></i> Bookings</a>
         <a href="/logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
     </nav>
 </div>
@@ -37,7 +36,6 @@
 
     <!-- Stat Cards -->
     <section class="cards">
-
         <div class="card users">
             <div>
                 <h3>Total Users</h3>
@@ -45,7 +43,6 @@
             </div>
             <i class="fas fa-users"></i>
         </div>
-
         <div class="card events">
             <div>
                 <h3>Total Events</h3>
@@ -53,7 +50,6 @@
             </div>
             <i class="fas fa-calendar-check"></i>
         </div>
-
         <div class="card bookings">
             <div>
                 <h3>Total Bookings</h3>
@@ -61,7 +57,6 @@
             </div>
             <i class="fas fa-ticket"></i>
         </div>
-
         <div class="card revenue">
             <div>
                 <h3>Total Revenue</h3>
@@ -69,19 +64,13 @@
             </div>
             <i class="fas fa-dollar-sign"></i>
         </div>
-
     </section>
-
-    <div class="table-header">
-        <h2>Recent Events</h2>
-        <button id="btn-new-event" class="view-btn">+ Create Event</button>
-    </div>
-
 
     <!-- Events Table -->
     <section class="table-section">
         <div class="table-header">
             <h2>Recent Events</h2>
+            <button id="btn-new-event" class="view-btn">+ Create Event</button>
         </div>
 
         <table>
@@ -89,23 +78,47 @@
                 <tr>
                     <th>Event</th>
                     <th>Date</th>
+                    <th>Venue</th>
+                    <th>Category</th>
+                    <th>Price</th>
                     <th>Capacity</th>
                     <th>Sold</th>
                     <th>Status</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
-
             <tbody>
                 <% events.forEach(event => { %>
                     <tr>
                         <td><%= event.title %></td>
                         <td><%= new Date(event.date).toDateString() %></td>
+                        <td><%= event.venue %></td>
+                        <td><%= event.category %></td>
+                        <td><%= event.ticketPrice === 0 ? 'Free' : 'R ' + event.ticketPrice %></td>
                         <td><%= event.capacity %></td>
                         <td><%= event.ticketsSold %></td>
                         <td>
                             <span class="status <%= event.status.toLowerCase() %>">
                                 <%= event.status %>
                             </span>
+                        </td>
+                        <td style="display: flex; gap: 0.5rem;">
+                            <button
+                                class="view-btn btn-edit"
+                                data-id="<%= event._id %>"
+                                data-title="<%= event.title %>"
+                                data-date="<%= event.date.toISOString().split('T')[0] %>"
+                                data-venue="<%= event.venue %>"
+                                data-description="<%= event.description %>"
+                                data-category="<%= event.category %>"
+                                data-capacity="<%= event.capacity %>"
+                                data-price="<%= event.ticketPrice %>"
+                                data-status="<%= event.status %>">
+                                Edit
+                            </button>
+                            <form action="/events/<%= event._id %>?_method=DELETE" method="POST" onsubmit="return confirm('Delete this event?')">
+                                <button type="submit" class="cancel-btn">Delete</button>
+                            </form>
                         </td>
                     </tr>
                 <% }) %>
@@ -115,44 +128,205 @@
 
 </div>
 
-<!-- MODAL: NEW EVENT FORM -->
+<!-- MODAL: CREATE EVENT -->
 <div class="modal-overlay" id="new-event-overlay">
-  <div class="modal">
-    <div class="modal-header">
-      <h2>Create New Event</h2>
-      <button class="modal-close" id="new-event-close">✕</button>
+    <div class="modal">
+        <div class="modal-header">
+            <h2>Create New Event</h2>
+            <button class="modal-close" id="new-event-close">✕</button>
+        </div>
+        <div class="modal-body">
+            <form id="newEventForm" class="detail-grid">
+                <div class="detail-item">
+                    <label>Title</label>
+                    <input type="text" name="title" required />
+                </div>
+                <div class="detail-item">
+                    <label>Description</label>
+                    <textarea name="description" required></textarea>
+                </div>
+                <div class="detail-item">
+                    <label>Date</label>
+                    <input type="date" name="date" required />
+                </div>
+                <div class="detail-item">
+                    <label>Venue</label>
+                    <input type="text" name="venue" required />
+                </div>
+                <div class="detail-item">
+                    <label>Category</label>
+                    <select name="category" required>
+                        <option value="">Select category</option>
+                        <option value="Music">Music</option>
+                        <option value="Sports">Sports</option>
+                        <option value="Business">Business</option>
+                        <option value="Technology">Technology</option>
+                        <option value="Education">Education</option>
+                    </select>
+                </div>
+                <div class="detail-item">
+                    <label>Capacity</label>
+                    <input type="number" name="capacity" min="1" required />
+                </div>
+                <div class="detail-item">
+                    <label>Ticket Price (R) — enter 0 for free</label>
+                    <input type="number" name="ticketPrice" min="0" value="0" required />
+                </div>
+                <div class="detail-item">
+                    <label>Status</label>
+                    <select name="status">
+                        <option value="Upcoming">Upcoming</option>
+                        <option value="Active">Active</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <button type="submit" class="view-btn active" style="margin-top: 1rem;">Create Event</button>
+            </form>
+        </div>
     </div>
-    <div class="modal-body">
-      <form id="newEventForm" class="detail-grid">
-        <div class="detail-item">
-          <label>Title</label>
-          <input type="text" id="ev-title" name="title" required />
-        </div>
-        <div class="detail-item">
-          <label>Date</label>
-          <input type="date" id="ev-date" name="date" required />
-        </div>
-        <div class="detail-item">
-          <label>Capacity</label>
-          <input type="number" id="ev-capacity" name="capacity" required />
-        </div>
-        <div class="detail-item">
-          <label>Status</label>
-          <select id="ev-status" name="status">
-            <option value="Upcoming">Upcoming</option>
-            <option value="Active">Active</option>
-            <option value="Completed">Completed</option>
-            <option value="Cancelled">Cancelled</option>
-          </select>
-        </div>
-        <button type="submit" class="view-btn active" style="margin-top:1rem">Create Event</button>
-      </form>
-    </div>
-  </div>
 </div>
 
-<script src="/scripts.js"">
+<!-- MODAL: EDIT EVENT -->
+<div class="modal-overlay" id="edit-event-overlay">
+    <div class="modal">
+        <div class="modal-header">
+            <h2>Edit Event</h2>
+            <button class="modal-close" id="edit-event-close">✕</button>
+        </div>
+        <div class="modal-body">
+            <form id="editEventForm" class="detail-grid">
+                <input type="hidden" id="edit-id" />
+                <div class="detail-item">
+                    <label>Title</label>
+                    <input type="text" id="edit-title" name="title" required />
+                </div>
+                <div class="detail-item">
+                    <label>Description</label>
+                    <textarea id="edit-description" name="description" required></textarea>
+                </div>
+                <div class="detail-item">
+                    <label>Date</label>
+                    <input type="date" id="edit-date" name="date" required />
+                </div>
+                <div class="detail-item">
+                    <label>Venue</label>
+                    <input type="text" id="edit-venue" name="venue" required />
+                </div>
+                <div class="detail-item">
+                    <label>Category</label>
+                    <select id="edit-category" name="category" required>
+                        <option value="Music">Music</option>
+                        <option value="Sports">Sports</option>
+                        <option value="Business">Business</option>
+                        <option value="Technology">Technology</option>
+                        <option value="Education">Education</option>
+                    </select>
+                </div>
+                <div class="detail-item">
+                    <label>Capacity</label>
+                    <input type="number" id="edit-capacity" name="capacity" min="1" required />
+                </div>
+                <div class="detail-item">
+                    <label>Ticket Price (R)</label>
+                    <input type="number" id="edit-price" name="ticketPrice" min="0" required />
+                </div>
+                <div class="detail-item">
+                    <label>Status</label>
+                    <select id="edit-status" name="status">
+                        <option value="Upcoming">Upcoming</option>
+                        <option value="Active">Active</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <button type="submit" class="view-btn active" style="margin-top: 1rem;">Save Changes</button>
+            </form>
+        </div>
+    </div>
+</div>
 
+<script src="/scripts.js"></script>
+
+<script>
+(function () {
+
+    // --- CREATE MODAL ---
+    document.getElementById('btn-new-event').addEventListener('click', function () {
+        document.getElementById('new-event-overlay').style.display = 'flex';
+    });
+    document.getElementById('new-event-close').addEventListener('click', function () {
+        document.getElementById('new-event-overlay').style.display = 'none';
+    });
+
+    document.getElementById('newEventForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var form = e.target;
+        var data = {
+            title: form.title.value,
+            description: form.description.value,
+            date: form.date.value,
+            venue: form.venue.value,
+            category: form.category.value,
+            capacity: form.capacity.value,
+            ticketPrice: form.ticketPrice.value,
+            status: form.status.value
+        };
+        fetch('/events', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        }).then(function (res) {
+            if (res.ok) { window.location.reload(); }
+            else { alert('Failed to create event'); }
+        });
+    });
+
+    // --- EDIT MODAL ---
+    document.querySelectorAll('.btn-edit').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            document.getElementById('edit-id').value          = btn.dataset.id;
+            document.getElementById('edit-title').value       = btn.dataset.title;
+            document.getElementById('edit-date').value        = btn.dataset.date;
+            document.getElementById('edit-venue').value       = btn.dataset.venue;
+            document.getElementById('edit-description').value = btn.dataset.description;
+            document.getElementById('edit-category').value    = btn.dataset.category;
+            document.getElementById('edit-capacity').value    = btn.dataset.capacity;
+            document.getElementById('edit-price').value       = btn.dataset.price;
+            document.getElementById('edit-status').value      = btn.dataset.status;
+            document.getElementById('edit-event-overlay').style.display = 'flex';
+        });
+    });
+    document.getElementById('edit-event-close').addEventListener('click', function () {
+        document.getElementById('edit-event-overlay').style.display = 'none';
+    });
+
+    document.getElementById('editEventForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        var id = document.getElementById('edit-id').value;
+        var form = e.target;
+        var data = {
+            title: form.title.value,
+            description: form.description.value,
+            date: form.date.value,
+            venue: form.venue.value,
+            category: form.category.value,
+            capacity: form.capacity.value,
+            ticketPrice: form.ticketPrice.value,
+            status: form.status.value
+        };
+        fetch('/events/' + id, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        }).then(function (res) {
+            if (res.ok) { window.location.reload(); }
+            else { alert('Failed to update event'); }
+        });
+    });
+
+})();
 </script>
 
 </body>
+</html>

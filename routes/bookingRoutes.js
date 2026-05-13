@@ -34,11 +34,12 @@ router.get('/:eventId', isAuthenticated, async (req, res) => {
         const event = await Event.findById(req.params.eventId);
         if (!event) return res.status(404).render('error', { message: 'Event not found' });
 
-        res.render('bookings/book', {
-            event,
-            user: req.session,
-            error: req.query.error || null
+        res.render('bookings', {
+            bookings,
+            totalBookings,
+            totalRevenue
         });
+        
     } catch (err) {
         res.status(500).render('error', { message: 'Could not load booking page' });
     }

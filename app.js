@@ -26,6 +26,9 @@ const enquiryRoutes = require('./routes/enquiryRoutes');
 // Import admin routes
 const adminRoutes = require('./routes/adminRoutes');
 
+//Import MethodOverride to allow deleting of events
+const methodOverride = require('method-override');
+
 // Initialize Express application
 const app = express();
 
@@ -65,6 +68,9 @@ app.use('/', enquiryRoutes);
 
 // Enable admin routes
 app.use('/admin', adminRoutes);
+
+//Enable method override for deleting events
+app.use(methodOverride('_method'));
 
 // Home route
 app.get('/', (req, res) => {
