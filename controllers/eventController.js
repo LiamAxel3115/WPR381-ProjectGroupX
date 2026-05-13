@@ -117,6 +117,35 @@ const deleteEvent = async (req, res) => {
     }
 };
 
+// Get home page with event listing, search and category filter
+const getHomePage = async (req, res) => {
+    try {
+        const filter = { status: { $ne: 'Cancelled' } };
+
+        if (req.query.category) {
+            filter.category = req.query.category;
+        }
+
+        if (req.query.search) {
+            filter.title = { $regex: req.query.search, $options: 'i' };
+        }
+
+        const events = await Event.find(filter).sort({ date: 1 });
+
+        res.render('index', {
+            events,
+            user: req.session,
+            selectedCategory: req.query.category || '',
+            search: req.query.search || ''
+        });
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).render('error', { message: 'Could not load homepage' });
+    }
+};
+
+
 
 // Export controller functions
 module.exports = {
@@ -124,5 +153,6 @@ module.exports = {
     getEvents,
     getEventById,
     updateEvent,
-    deleteEvent
+    deleteEvent,
+    getHomePage
 };

@@ -73,11 +73,9 @@ app.use('/admin', adminRoutes);
 app.use(methodOverride('_method'));
 
 // Home route
-app.get('/', (req, res) => {
-
-    // Render homepage view
-    res.render('index');
-});
+// Import home page function
+const { getHomePage } = require('./controllers/eventController');
+app.get('/', getHomePage);
 
 // Set application port
 const PORT = process.env.PORT || 3000;

@@ -1,72 +1,102 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
-    <!-- Character encoding -->
     <meta charset="UTF-8">
-
-    <!-- Responsive design settings -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <!-- Browser tab title -->
     <title>Smart Event Platform</title>
-
 </head>
 <body>
-    <%- include('partials/header', { title: 'Events' }) %>
 
-    <div class="row">
-        <div class="col-md-8">
-            <!-- Main system heading -->
-            <h1>Smart Event Management Platform</h1>
-        </div>
-        <div class="col-md-4">
-            <!--we create a search and filter-->
-            <form action="/" method="GET" class="d-flex">
-                <input class="form-control me-2" type="search" name="search" placeholder="Search events..." aria-label="Search">
-                <select class="form-select me-2" name="category">
-                    <option value="">All Categories</option>
-                    <option value="music">Music</option>
-                    <option value="sports">Sports</option>
-                    <option value="theatre">Theatre</option>
-                    <option value="conference">Conference</option>
-                    <option value="workshop">Workshop</option>
-                    <option value="festival">Festival</option>
-                </select>
-                <button class="btn btn-outline-success" type="submit">Search</button>
-            </form>
-        </div>
+<%- include('partials/header', { title: 'Home' }) %>
+
+<!-- Hero Section -->
+<div class="row mb-4">
+    <div class="col-md-8">
+        <h1>Smart Event Management Platform</h1>
+        <p class="text-muted">Browse and book upcoming events happening near you.</p>
     </div>
+    <div class="col-md-4">
+        <form action="/" method="GET" class="d-flex gap-2">
+            <input
+                class="form-control"
+                type="search"
+                name="search"
+                placeholder="Search events..."
+                value="<%= typeof search !== 'undefined' ? search : '' %>"
+            />
+            <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>
+    </div>
+</div>
 
-    <!--creation of the event-cards-->
-    <section class="row" aria-labelledby="evets-heading">
-        <h2 id="events-heading" class="visually-hidden">Upcoming events</h2>
+<!-- Category Filter -->
+<div class="mb-4 d-flex gap-2 flex-wrap">
+    <a href="/" class="btn btn-sm <%= !selectedCategory ? 'btn-dark' : 'btn-outline-dark' %>">All</a>
+    <% ['Music', 'Sports', 'Business', 'Technology', 'Education'].forEach(cat => { %>
+        <a href="/?category=<%= cat %>" class="btn btn-sm <%= selectedCategory === cat ? 'btn-dark' : 'btn-outline-dark' %>">
+            <%= cat %>
+        </a>
+    <% }) %>
+</div>
 
-        <% if (locals.events && events.length > 0) { %>
-            <% events.forEach(event => { %>
-                <div class="col-md-4">
-                    <article class="card event-card">
-                        <div class="card-body">
-                            <h3 class="card-title h5"><%= event.name %></h3>
-                            <p class="card-text"><%= event.description ? event.description.substring(0,100) : '' %></p>
-                            <p>
-                                <b>Date:</b>
-                                <time datetime=""<%= event.date.toISOString ? event.date.toISOString() : '' %>"
-                                    <%= event.date.toDateString ? event.date.toDateString() : event.date %>
-                                </time>
-                            </p>
-                            <p><strong>Available tickets:</strong> <%= event.availableTickets %></p>
-                            <a href="/events/<%= event._id %>" class="btn btn-primary">View Details</a>
+<!-- Events Grid -->
+<section class="row g-4" aria-labelledby="events-heading">
+    <h2 id="events-heading" class="visually-hidden">Upcoming Events</h2>
+
+    <% if (events && events.length > 0) { %>
+        <% events.forEach(event => { %>
+            <% const available = event.capacity - event.ticketsSold; %>
+            <div class="col-md-4">
+                <article class="card h-100 shadow-sm">
+                    <div class="card-body d-flex flex-column">
+
+                        <!-- Category + availability badge -->
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="badge bg-secondary"><%= event.category %></span>
+                            <% if (available <= 0) { %>
+                                <span class="badge bg-danger">Sold Out</span>
+                            <% } else if (available <= 10) { %>
+                                <span class="badge bg-warning text-dark">Almost Full</span>
+                            <% } else { %>
+                                <span class="badge bg-success">Available</span>
+                            <% } %>
                         </div>
-                    </article>
-                </div> <%}) %>
-            <% } else { %>
-                <p>No events found.</p>
-            <% } %>
-    </section>
-    
-    <!-- Basic server status message -->
-    <p>Server is working successfully.</p>
+
+                        <h3 class="card-title h5"><%= event.title %></h3>
+                        <p class="card-text text-muted">
+                            <%= event.description ? event.description.substring(0, 100) + '...' : '' %>
+                        </p>
+
+                        <ul class="list-unstyled mt-auto mb-3">
+                            <li><strong>Date:</strong> <%= new Date(event.date).toDateString() %></li>
+                            <li><strong>Venue:</strong> <%= event.venue %></li>
+                            <li><strong>Tickets Left:</strong> <%= available %></li>
+                            <li><strong>Price:</strong>
+                                <%= event.ticketPrice === 0 ? 'Free' : 'R ' + event.ticketPrice %>
+                            </li>
+                        </ul>
+
+                        <% if (available <= 0) { %>
+                            <button class="btn btn-secondary" disabled>Sold Out</button>
+                        <% } else if (locals.user) { %>
+                            <a href="/bookings/<%= event._id %>" class="btn btn-primary">Book Now</a>
+                        <% } else { %>
+                            <a href="/login" class="btn btn-outline-primary">Login to Book</a>
+                        <% } %>
+
+                    </div>
+                </article>
+            </div>
+        <% }) %>
+    <% } else { %>
+        <div class="col-12">
+            <p class="text-muted">No events found. Check back soon!</p>
+        </div>
+    <% } %>
+
+</section>
+
+
+
 </body>
-<footer><%- include('partials/footer') %></footer>
 </html>

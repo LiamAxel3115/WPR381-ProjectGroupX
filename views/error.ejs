@@ -1,0 +1,11 @@
+<%- include('partials/header', { title: 'Error' }) %>
+
+<div class="row justify-content-center">
+    <div class="col-md-6 text-center">
+        <h1 class="mb-3">Oops!</h1>
+        <div class="alert alert-danger">
+            <%= message || 'Something went wrong.' %>
+        </div>
+        <a href="/" class="btn btn-primary">Go Home</a>
+    </div>
+</div>
